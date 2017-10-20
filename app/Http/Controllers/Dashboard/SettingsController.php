@@ -12,17 +12,17 @@
 namespace CachetHQ\Cachet\Http\Controllers\Dashboard;
 
 use CachetHQ\Cachet\Bus\Commands\System\Config\UpdateConfigCommand;
-use CachetHQ\Cachet\Bus\Commands\System\Mail\TestMailCommand;
 use CachetHQ\Cachet\Integrations\Contracts\Credits;
 use CachetHQ\Cachet\Models\User;
+use CachetHQ\Cachet\Notifications\System\SystemTestNotification;
 use CachetHQ\Cachet\Settings\Repository;
 use Exception;
 use GrahamCampbell\Binput\Facades\Binput;
+use Illuminate\Log\Writer;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
@@ -268,9 +268,13 @@ class SettingsController extends Controller
     {
         $this->subMenu['log']['active'] = true;
 
-        $log = Log::getMonolog();
+        $log = app(Writer::class)->getMonolog();
 
-        $logContents = file_get_contents($log->getHandlers()[0]->getUrl());
+        if (file_exists($path = $log->getHandlers()[0]->getUrl())) {
+            $logContents = file_get_contents($path);
+        } else {
+            $logContents = '';
+        }
 
         return View::make('dashboard.settings.log')->withLog($logContents)->withSubMenu($this->subMenu);
     }
@@ -294,7 +298,7 @@ class SettingsController extends Controller
      */
     public function testMail()
     {
-        dispatch(new TestMailCommand(Auth::user()));
+        Auth::user()->notify(new SystemTestNotification());
 
         return cachet_redirect('dashboard.settings.mail')
             ->withSuccess(trans('dashboard.notifications.awesome'));

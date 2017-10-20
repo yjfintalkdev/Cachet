@@ -57,7 +57,11 @@
                     </div>
                     <div class="form-group">
                         <label for="metric-places">{{ trans('forms.metrics.threshold') }}</label>
-                        <input type="number" min="0" max="100" class="form-control" name="metric[threshold]" id="metric-threshold" required value="{{ Binput::old('metric.threshold') }}" placeholder="{{ trans('forms.metrics.threshold') }}">
+                        <select name="metric[threshold]" class="form-control" required>
+                            @foreach ($acceptable_thresholds as $threshold)
+                            <option {{ (int) Binput::old('metric.threshold') === $threshold ? 'selected' : null }}>{{ $threshold }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="checkbox">
                         <label>
@@ -68,7 +72,7 @@
                     </div>
                     <div class="form-group">
                         <label>{{ trans('forms.metrics.visibility') }}</label>
-                        <select name="visible" class="form-control" required>
+                        <select name="metric[visible]" class="form-control" required>
                             <option value="0">{{ trans('forms.metrics.visibility_authenticated') }}</option>
                             <option value="1">{{ trans('forms.metrics.visibility_public') }}</option>
                             <option value="2">{{ trans('forms.metrics.visibility_hidden') }}</option>

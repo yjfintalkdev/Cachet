@@ -9,9 +9,31 @@
  * file that was distributed with this source code.
  */
 
+use CachetHQ\Cachet\Settings\Repository;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Jenssegers\Date\Date;
+
+if (!function_exists('setting')) {
+    /**
+     * Get a setting, or the default value.
+     *
+     * @param string $name
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    function setting($name, $default = null)
+    {
+        static $settings = [];
+
+        if (isset($settings[$name])) {
+            return $settings[$name];
+        }
+
+        return $settings[$name] = app(Repository::class)->get($name, $default);
+    }
+}
 
 if (!function_exists('set_active')) {
     /**
@@ -159,63 +181,5 @@ if (!function_exists('cachet_redirect')) {
         $url = cachet_route($name, $parameters, $method, $domain);
 
         return app('redirect')->to($url, $status, $headers);
-    }
-}
-
-if (!function_exists('datetime_to_moment')) {
-    /**
-     * Convert PHP datetimes to moment.js formats.
-     *
-     * Thanks to http://stackoverflow.com/a/30192680/394013
-     *
-     * @param string $format
-     *
-     * @return string
-     */
-    function datetime_to_moment($format)
-    {
-        $replacements = [
-            'd' => 'DD',
-            'D' => 'ddd',
-            'j' => 'D',
-            'l' => 'dddd',
-            'N' => 'E',
-            'S' => 'o',
-            'w' => 'e',
-            'z' => 'DDD',
-            'W' => 'W',
-            'F' => 'MMMM',
-            'm' => 'MM',
-            'M' => 'MMM',
-            'n' => 'M',
-            't' => '', // no equivalent
-            'L' => '', // no equivalent
-            'o' => 'YYYY',
-            'Y' => 'YYYY',
-            'y' => 'YY',
-            'a' => 'a',
-            'A' => 'A',
-            'B' => '', // no equivalent
-            'g' => 'h',
-            'G' => 'H',
-            'h' => 'hh',
-            'H' => 'HH',
-            'i' => 'mm',
-            's' => 'ss',
-            'u' => 'SSS',
-            'e' => 'zz', // deprecated since version 1.6.0 of moment.js
-            'I' => '', // no equivalent
-            'O' => '', // no equivalent
-            'P' => '', // no equivalent
-            'T' => '', // no equivalent
-            'Z' => '', // no equivalent
-            'c' => '', // no equivalent
-            'r' => '', // no equivalent
-            'U' => 'X',
-        ];
-
-        $momentFormat = strtr($format, $replacements);
-
-        return $momentFormat;
     }
 }

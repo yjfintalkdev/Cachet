@@ -14,7 +14,7 @@ namespace CachetHQ\Cachet\Composers;
 use Illuminate\Contracts\View\View;
 
 /**
- * This is the settings composer.
+ * This is the settings composer class.
  *
  * @author James Brooks <james@alt-three.com>
  */
@@ -40,12 +40,12 @@ class SettingsComposer
      * @var string[]
      */
     protected $mailDrivers = [
-        'smtp'     => 'SMTP',
-        'mail'     => 'Mail',
-        'sendmail' => 'Sendmail',
-        'mailgun'  => 'Mailgun',
-        'mandrill' => 'Mandrill',
-        // 'ses'       => 'Amazon SES', this will be available only if aws/aws-sdk-php is installed
+        'smtp'      => 'SMTP',
+        'mail'      => 'Mail',
+        'sendmail'  => 'Sendmail',
+        'mailgun'   => 'Mailgun',
+        'mandrill'  => 'Mandrill',
+        'ses'       => 'Amazon SES',
         'sparkpost' => 'SparkPost',
         'log'       => 'Log (Testing)',
     ];
